@@ -1,0 +1,39 @@
+&HEAD CHID='{TITLE}', TITLE='Basic model of recessed enclosure with heated wall' /
+
+&MESH IJK=100,1,100, XB=-0.45,0.55,-0.3,0.3,0,1 /
+
+&TIME T_END=30. / # , WALL_INCREMENT=1, DT=1.0 /
+
+&MISC DNS=.TRUE., RADIATION=.TRUE. / 
+
+&SURF ID = 'HOT',
+      TMP_FRONT = {WALL_TEMP},
+      TAU_T = 0.1,
+      EMISSIVITY = 0.8/
+
+&SURF ID = 'COLD',
+      TMP_FRONT = {COLD_TEMP},
+      TAU_T = 0.1,
+      EMISSIVITY = 0.8/
+
+&VENT MB='XMIN', SURF_ID='OPEN' /
+&VENT MB='XMAX', SURF_ID='OPEN' /
+&VENT MB='ZMAX', SURF_ID='COLD' /
+
+&OBST XB= -0.45, 0, -0.3, 0.3, 0.0, 0.1, SURF_ID6(2)='HOT' /
+&OBST XB= {STEP_WMAX}, 0.55, -0.3, 0.3, 0.0, 0.1 /
+
+&BNDF QUANTITY='WALL TEMPERATURE' /
+
+&SLCF XB = -0.45,0.55,0,0,0,1, QUANTITY='VELOCITY', VECTOR=.TRUE. / 
+&SLCF XB = -0.45,0.55,0,0,0,1, QUANTITY='TEMPERATURE', VECTOR=.TRUE. /
+
+&DEVC XYZ=0.025,0,0.05, QUANTITY='oxygen', ID='RTD1' /
+&DEVC XYZ=0.025,0,0.15, QUANTITY='oxygen', ID='RTD2' /
+&DEVC XYZ=0.025,0,0.35, QUANTITY='oxygen', ID='RTD3' /
+&DEVC XYZ=0.025,0,0.65, QUANTITY='oxygen', ID='RTD4' /
+&DEVC XYZ=0.025,0,0.95, QUANTITY='oxygen', ID='RTD5' /
+&DEVC XYZ=-0.025,0,0.65, QUANTITY='oxygen', ID='RTD6' /
+&DEVC XYZ=0.075,0,0.65, QUANTITY='oxygen', ID='RTD7' /
+
+&TAIL /

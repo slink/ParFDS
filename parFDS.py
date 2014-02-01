@@ -91,7 +91,7 @@ def plotter(parameters, plotted_val = 'HRR',  **kwargs):
 			plt.savefig(key + ' ' + str(results[0]) + '.png', dpi = 300)
 
 if __name__ == '__main__':
-	input_file = 'StepBoxDan.fds'
+	input_file = 'example_input_file.fds'
 	parameters = {'STEP_WMAX': np.linspace(0.05,0.4,4), 
 				  'WALL_TEMP': np.ceil(np.linspace(50, 200, 4)), 
 				  'COLD_TEMP': [25.0]}

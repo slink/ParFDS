@@ -28,4 +28,4 @@ main(input_file, parameters, **kwargs)
 
 One more thing: in the StepBoxDan.fds example file, certain of the variables are in curley braces eg. {STEP_WMAX}. That is actually used for the variable replacement in Python, which occurs in build_input_files() in helper_functions.py. The point here is that if the key 'STEP_WMAX' exists in the parameters dictionary, and also exists in the FDS input file in the form {STEP_WMAX}, the code will know to replace that string with the appropriate numerical value when it generates the input files. 
 
-Functional Note: the tests of this code have only been run under OS X and Ubuntu, so I am not sure at all if this code will balk on Windows. If you are going to use this on Windows, please ensure (at a minimum) that the command 'nosetests test_input_file_builder.py' run at the command prompt passes first. 
+Functional Note: the tests of this code have only been run under OS X and Ubuntu, so I am not sure at all if this code will balk on Windows. If you are going to use this on Windows, please ensure (at a minimum) that the command 'nosetests ./tests/test_input_file_builder.py' run at the command prompt passes first. 

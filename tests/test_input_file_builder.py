@@ -44,7 +44,7 @@ class Test_build_input_files(object):
 		self.x = {'a': [0,1], 'b': [2,3], 'c': [4]}
 		self.test_name = 'STEP_BOX'
 		self.base_path = 'input_files'
-		self.file_name = 'test.fds'
+		self.file_name = './tests/test.fds'
 	
 	def setup(self):
 		build_input_files(self.file_name, self.x, 

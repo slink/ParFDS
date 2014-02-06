@@ -1,4 +1,4 @@
-import os, itertools, shutil
+import os, itertools, shutil, re, string
 import numpy as np
 
 def dict_product(dicts):
@@ -102,3 +102,32 @@ def input_file_paths(base_path):
 		        #paths.append(dirpath+"/"+onefile)      
 		        paths.append(os.path.join(os.getcwd(), dirpath, onefile))
 	return paths
+
+def int2base(x, base):
+    """
+    int2base(x, base) takes an integer and returns the base representation in 
+    alphabetical order like one would see in excel column labeling 
+    (0 -> a, 27 -> ab in base 26)
+    
+    based on https://stackoverflow.com/questions/2267362
+    """
+    digs = string.lowercase
+    
+    assert type(x) is int, "x is not an integer: %r" % x
+    assert type(base) is int, "base is not an integer: %r" % base
+    
+    if x < 0: sign = -1
+    elif x==0: return 'a'
+    else: sign = 1
+    x *= sign
+    digits = []
+    y = x
+    while y:
+        digits.append(digs[x % base])
+        y = x / base
+        x = (x / base) - 1
+    if sign < 0:
+        digits.append('-')
+        digits.reverse()
+    # 
+    return ''.join(digits)[::-1]

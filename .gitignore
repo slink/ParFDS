@@ -3,6 +3,9 @@
 # C extensions
 *.so
 
+# ipython checkpoint stuff
+.ipynb_checkpoints
+
 # Packages
 *.egg
 *.egg-info

@@ -1,1 +1,4 @@
-{TITLE} {a} {b} {c}
+&CHID = '{TITLE}' / 
+A = {A SWEEP 0, 1, 3} / 
+B = {B SWEEP 2, 3, 2} / 
+C = {C SWEEP 4, 4, 1} /

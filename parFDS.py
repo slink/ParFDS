@@ -51,10 +51,9 @@ def fds_calculation(input_path):
 	os.chdir(cur_dir)
 	return retcode
 
-def main(input_file, parameters, **kwargs):
-	build_input_files(input_file, parameters, 
-					  base_path = kwargs['base_path'], 
-					  test_name = kwargs['test_name'])
+def main(input_file, **kwargs):
+	build_input_files(input_file, 
+					  base_path = kwargs['base_path'])
 	paths = input_file_paths(kwargs['base_path'])
 	pool = build_pool(multiproc = kwargs['multiproc'], 
 					  pool_size = kwargs['pool_size'])
@@ -92,9 +91,6 @@ def plotter(parameters, plotted_val = 'HRR',  **kwargs):
 
 if __name__ == '__main__':
 	input_file = 'example_input_file.fds'
-	parameters = {'STEP_WMAX': np.linspace(0.05,0.4,4), 
-				  'WALL_TEMP': np.ceil(np.linspace(50, 200, 4)), 
-				  'COLD_TEMP': [25.0]}
 	kwargs = {'test_name' : 'StepBoxDan', 
 			  'base_path' : 'input_files', 
 			  'funct' : fds_calculation,

@@ -1,4 +1,4 @@
-import nose, os, shutil, multiprocessing
+import nose, os, shutil, multiprocessing, StringIO
 from sets import Set
 
 from nose.tools import with_setup
@@ -9,25 +9,30 @@ from helper_functions import dict_product, dict_builder, input_directory_builder
 #### tests ####	
 class Test_build_input_files(object):
 	def __init__(self):
-		self.x = {'a': [0,1], 'b': [2,3], 'c': [4]}
-		self.test_name = 'STEP_BOX'
 		self.base_path = 'input_files'
 		self.file_name = './tests/input_file_builder.fds'
 	
 	def setup(self):
-		build_input_files(self.file_name, self.x, 
-				base_path = self.base_path, test_name = self.test_name)
+		self.out = StringIO.StringIO()
+		self.output = build_input_files(self.file_name, base_path = self.base_path, out = self.out) 
+		self.output = self.output.getvalue().strip()
+		
+		# build_input_files(self.file_name, base_path = self.base_path)
 
 	def teardown(self):
 		shutil.rmtree(self.base_path)
 
 	def build_input_files_test(self):
 		file_list = Set(input_file_paths(self.base_path))
-		vals = Set([os.path.join(os.getcwd(),'input_files/STEP_BOX0-4-2/STEP_BOX0-4-2.fds'),
-			os.path.join(os.getcwd(),'input_files/STEP_BOX0-4-3/STEP_BOX0-4-3.fds'),
-			os.path.join(os.getcwd(),'input_files/STEP_BOX1-4-2/STEP_BOX1-4-2.fds'),
-			os.path.join(os.getcwd(),'input_files/STEP_BOX1-4-3/STEP_BOX1-4-3.fds')])
+		vals = Set([os.path.join(os.getcwd(),'input_files/input_file_builder.log'),
+					 os.path.join(os.getcwd(),'input_files/case_a/case_a.fds'),
+					 os.path.join(os.getcwd(),'input_files/case_b/case_b.fds'),
+					 os.path.join(os.getcwd(),'input_files/case_c/case_c.fds'),
+					 os.path.join(os.getcwd(),'input_files/case_d/case_d.fds'),
+					 os.path.join(os.getcwd(),'input_files/case_e/case_e.fds'),
+					 os.path.join(os.getcwd(),'input_files/case_f/case_f.fds')])
 		assert Set(file_list) == Set(vals)
+		print self.output
 
 class Test_build_pool_1(object):
 	def __init__(self):

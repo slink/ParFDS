@@ -4,6 +4,15 @@
 # C extensions
 *.so
 
+# FDS files
+input_files
+*.smv
+*.csv
+*.bf
+*.sf
+*.end
+*.out
+
 # ipython checkpoint stuff
 .ipynb_checkpoints
 

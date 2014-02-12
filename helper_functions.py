@@ -116,14 +116,16 @@ def input_file_paths(base_path):
 	for dirpath, dirnames, filenames in os.walk(base_path):
 		for onefile in filenames:
 			# the following if statement is due to OS X .DsStore bullshit...
-			if not onefile.startswith('.DS'):
+			if not (onefile.startswith('.DS') or onefile.endswith('.log')):
 				#paths.append(dirpath+"/"+onefile)      
 				paths.append(os.path.join(os.getcwd(), dirpath, onefile))
 	return paths
 	
 def int2base(x, base=26):
     """
-    int2base(x, base) takes an integer and returns the base 26 representation (defualt) in letters
+    int2base(x, base) 
+
+    takes an integer and returns the base 26 representation (defualt) in letters
     like one would see in excel column labeling (0 -> a, 63 -> cl)
     
     based on https://stackoverflow.com/questions/2267362
@@ -151,7 +153,9 @@ def int2base(x, base=26):
 
 def FDSa_parser(txt, filename, IOoutput=sys.stdout):
     """
-    FDSa_parser(txt, filename, IOoutput) takes in an augmented FDS file and determines how many 
+    FDSa_parser(txt, filename, IOoutput) 
+
+    takes in an augmented FDS file and determines how many 
     parametric will be created from that it also parses the augmented syntax to 
     build the dictionary used in generating the specific case FDS files
     """
@@ -199,9 +203,10 @@ def FDSa_parser(txt, filename, IOoutput=sys.stdout):
 
 def eval_parsed_FDS(param_dict, IOoutput = sys.stdout):       
     """
-    eval_parsed_FDS(param_dict, IOoutput = sys.stdout) takes the dictionary that 
-    is returned by FDSa_parser and actually evaluates it to create python readable 
-    arrays that can be broken up for the parametric studies.
+    eval_parsed_FDS(param_dict, IOoutput = sys.stdout) 
+
+    takes the dictionary that is returned by FDSa_parser and actually evaluates 
+    it to create python readable arrays that can be broken up for the parametric studies.
     """
     permutations = 1
     for key, value in param_dict.iteritems():

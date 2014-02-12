@@ -77,7 +77,7 @@ def build_input_files(filename, base_path = 'input_files', out = sys.stdout):
     with open(filename, 'r') as f:
         txt = f.read()
     
-    formatted_trials, logfile, out = FDSa_parser(filename, base_path, out)
+    formatted_trials, txt, logfile, IOoutput = FDSa_parser(txt, file_name, out)
         
     for i, value_set in enumerate(formatted_trials):
         tmp_txt = txt
@@ -97,11 +97,13 @@ def build_input_files(filename, base_path = 'input_files', out = sys.stdout):
         
     log_path_name = os.path.join(calling_dir, base_path, file_name[:-4] + '.log')
     
+    # write the augmented fds log file
+
     with open(log_path_name, 'a') as f:
         f.write(logfile)
+        
+    return IOoutput
     
-    return out
-
 def input_file_paths(base_path):
 	"""
 	input_file_paths(base_path) 
@@ -146,18 +148,19 @@ def int2base(x, base=26):
     # 
     return ''.join(digits)[::-1]
 
-def FDSa_parser(filename, base_path, out=sys.stdout):
+def FDSa_parser(txt, filename, IOoutput=sys.stdout):
     """
-    FDSa_parser(filename, base_path, out) takes in an augmented FDS file and determines how many parametric will be created from that
-    it also parses the augmented syntax to build the dictionary used in generating the specific case FDS files
+    FDSa_parser(txt, filename, IOoutput) takes in an augmented FDS file and determines how many 
+    parametric will be created from that it also parses the augmented syntax to 
+    build the dictionary used in generating the specific case FDS files
     """
-    # I'm doing this because I need it later
-    file_path, file_name = os.path.split(filename)
+    ## I'm doing this because I need it later
+    #file_path, file_name = os.path.split(filename)
     # open the augmented fds input file
-    with open(os.path.join(file_path, file_name), 'r') as f:
-        read_data = f.read()
+    #with open(os.path.join(file_path, file_name), 'r') as f:
+    #    read_data = f.read()
         
-    regex_find = re.findall('\{*[0-9a-zA-Z_:,.\s]*\}', read_data)
+    regex_find = re.findall('\{*[0-9a-zA-Z_:,.\s]*\}', txt)
     
     params = []
     params_raw = []
@@ -176,16 +179,15 @@ def FDSa_parser(filename, base_path, out=sys.stdout):
         param_dict = dict(zip(params[1::2], params[2::2]))
         param_list = [params[0]]
         param_list.extend(params[1::2])
-        params_name_dict = dict(zip(param_list, params_raw))
+        param_name_dict = dict(zip(param_list, params_raw))
     else:
         param_dict = dict(zip(params[::2], params[1::2]))
         param_list = params[::2]
-        params_name_dict = dict(zip(param_list, params_raw))
-    
-    
-    out.write('-'*10 + 'ParFDS input file interpreter' + '-'*10 + '\n')
-    out.write('the following are the keys and values'+ '\n')
-    out.write('seen in ' + filename + '\n')
+        param_name_dict = dict(zip(param_list, params_raw))
+        
+    IOoutput.write('-'*10 + 'ParFDS input file interpreter' + '-'*10 + '\n')
+    IOoutput.write('the following are the keys and values'+ '\n')
+    IOoutput.write('seen in ' + filename + '\n')
         
     permutations = 1
     for key, value in param_dict.iteritems():
@@ -198,11 +200,11 @@ def FDSa_parser(filename, base_path, out=sys.stdout):
         
         permutations *= int(value_split[2])
         
-        out.write(key + ' varied between ' + str(value_split[0]) +\
+        IOoutput.write(key + ' varied between ' + str(value_split[0]) +\
             ' and ' + str(value_split[1]) + ' in ' + str(value_split[2]) + ' step(s)' + '\n')
     
-    out.write('-'*10 + ' '*10 + '-'*10 + ' '*10 + '-'*10 + '\n') 
-    out.write('for a total of ' + str(permutations) + ' trials' + '\n')
+    IOoutput.write('-'*10 + ' '*10 + '-'*10 + ' '*10 + '-'*10 + '\n') 
+    IOoutput.write('for a total of ' + str(permutations) + ' trials' + '\n')
     
     trials = dict_product(param_dict)
 
@@ -214,15 +216,18 @@ def FDSa_parser(filename, base_path, out=sys.stdout):
     for i, v in enumerate(trials):
         case_temp = 'case ' + int2base(i, base) + ': '
         logfile += case_temp
-        out.write(case_temp,)
+        IOoutput.write(case_temp,)
         for key, val in v.iteritems():
             kv_temp = key + ' ' + str(round(val, 2)) + ' '
             logfile += kv_temp + ' '
-            out.write(kv_temp,)
-        out.write(newline)
+            IOoutput.write(kv_temp,)
+        IOoutput.write(newline)
         logfile += newline
-        formatted_trials.append({params_name_dict[key] : round(value, 3) for key, value in v.items() })
-    # write the augmented fds log file
+        formatted_trials.append({key : value for key, value in v.items() })
+ 
+    # dealing with the `:` and `.` issue in the key value land 
+    for key, value in param_name_dict.iteritems():
+        txt = string.replace(txt, value, key)
     
     """
     >>> important_dict = {'x':1, 'y':2, 'z':3}
@@ -230,5 +235,5 @@ def FDSa_parser(filename, base_path, out=sys.stdout):
     >>> {name_replacer[key] : value for key, value in important_dict.items() }
     {'a': 1, 'b': 2, 'c': 3}
     """    
-    # out.getvalue().strip()
-    return formatted_trials, logfile, out
+    # IOoutput.getvalue().strip()
+    return formatted_trials, txt, logfile, IOoutput

@@ -95,12 +95,12 @@ if __name__ == '__main__':
 			  'base_path' : 'input_files', 
 			  'funct' : fds_calculation,
 			  'multiproc' : True, 
-			  'pool_size' : 4}
+			  'pool_size' : 1}
 
 	calling_dir = os.getcwd()
 	
 	if os.path.exists(os.path.join(calling_dir, kwargs['base_path'])):
 		shutil.rmtree(os.path.join(calling_dir, kwargs['base_path']))
 
-	main(input_file, parameters, **kwargs)
-	plotter(parameters, plotted_val = 'HRR',  **kwargs)
+	main(input_file, **kwargs)
+	# plotter(parameters, plotted_val = 'HRR',  **kwargs)

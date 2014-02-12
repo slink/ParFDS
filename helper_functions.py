@@ -77,7 +77,8 @@ def build_input_files(filename, base_path = 'input_files', out = sys.stdout):
     with open(filename, 'r') as f:
         txt = f.read()
     
-    formatted_trials, txt, logfile, IOoutput = FDSa_parser(txt, file_name, out)
+    param_dict, txt, IOoutput = FDSa_parser(txt, file_name, out)
+    formatted_trials, logfile, IOoutput = eval_parsed_FDS(param_dict, out)
         
     for i, value_set in enumerate(formatted_trials):
         tmp_txt = txt
@@ -184,11 +185,24 @@ def FDSa_parser(txt, filename, IOoutput=sys.stdout):
         param_dict = dict(zip(params[::2], params[1::2]))
         param_list = params[::2]
         param_name_dict = dict(zip(param_list, params_raw))
-        
+    
+    # dealing with the `:` and `.` issue in the FDS file due to 
+    # key value restrictions in python 
+    for key, value in param_name_dict.iteritems():
+        txt = string.replace(txt, value, key)
+
     IOoutput.write('-'*10 + 'ParFDS input file interpreter' + '-'*10 + '\n')
     IOoutput.write('the following are the keys and values'+ '\n')
     IOoutput.write('seen in ' + filename + '\n')
-        
+    
+    return param_dict, txt, IOoutput
+
+def eval_parsed_FDS(param_dict, IOoutput = sys.stdout):       
+    """
+    eval_parsed_FDS(param_dict, IOoutput = sys.stdout) takes the dictionary that 
+    is returned by FDSa_parser and actually evaluates it to create python readable 
+    arrays that can be broken up for the parametric studies.
+    """
     permutations = 1
     for key, value in param_dict.iteritems():
         value_str = 'np.linspace(' + value.replace("'", "") +')'
@@ -224,10 +238,7 @@ def FDSa_parser(txt, filename, IOoutput=sys.stdout):
         IOoutput.write(newline)
         logfile += newline
         formatted_trials.append({key : value for key, value in v.items() })
- 
-    # dealing with the `:` and `.` issue in the key value land 
-    for key, value in param_name_dict.iteritems():
-        txt = string.replace(txt, value, key)
+
     
     """
     >>> important_dict = {'x':1, 'y':2, 'z':3}
@@ -236,4 +247,4 @@ def FDSa_parser(txt, filename, IOoutput=sys.stdout):
     {'a': 1, 'b': 2, 'c': 3}
     """    
     # IOoutput.getvalue().strip()
-    return formatted_trials, txt, logfile, IOoutput
+    return formatted_trials, logfile, IOoutput

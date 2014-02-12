@@ -1,17 +1,15 @@
-The code is three files plus an example FDS input file. 
+The code is a number of files plus an example FDS input file. 
 
 -> parFDS.py - the code which orchestrates the whole shebang
--> helper_functions.py - which do some of the more mundane folder generation etc.
--> test_input_file_builder.py - basic tests to make sure I didn't break my own code along the way
--> StepBoxDan.fds - an example modified FDS input template
+-> example_input_file.fds - an example modified FDS input template
 
-Most of the important stuff takes place after the if __name__ == '__main__' in pafFDS.py 
+Most of the important stuff takes place after the if __name__ == '__main__' in ParFDS.py 
 
 Here's a walkthrough: 
 
 The first line which defines 'input_file' tells the code where to look for the template input file.
 
-The 'parameters' dictionary tells the code what the parameters in this parametric study are, their ranges, and their names.
+Parameters are defined via an augmented FDS syntax which is parsed in the code base. Variables in this syntax for these parametric studies are {Variable_Name SWEEP First_Value, Second_Value, Nubmer_Steps}, where SWEEP is a protected word which lets ParFDS know that we will be attempting a linear parametric study in that variable.
 
 The 'kwargs', dictionary sets things like: 
 -> 'test_name' - which is the prefix appended to all the generated FDS input files and folder names
@@ -26,6 +24,6 @@ The code is then run using the main function, with the syntax:
 
 main(input_file, parameters, **kwargs)
 
-One more thing: in the StepBoxDan.fds example file, certain of the variables are in curley braces eg. {STEP_WMAX}. That is actually used for the variable replacement in Python, which occurs in build_input_files() in helper_functions.py. The point here is that if the key 'STEP_WMAX' exists in the parameters dictionary, and also exists in the FDS input file in the form {STEP_WMAX}, the code will know to replace that string with the appropriate numerical value when it generates the input files. 
+One more thing: in the example_input_file.fds example file, certain of the variables are in curley braces eg. {COLD_TEMP SWEEP 20, 20, 1}. That is actually used for the variable replacement in Python, which occurs in build_input_files() in helper_functions.py. The point here is that if the key 'STEP_WMAX' exists in the parameters dictionary, and also exists in the FDS input file in the form {COLD_TEMP SWEEP 20, 20, 1}, the code will know to replace that string with the appropriate numerical value when it generates the input files. 
 
-Functional Note: the tests of this code have only been run under OS X and Ubuntu, so I am not sure at all if this code will balk on Windows. If you are going to use this on Windows, please ensure (at a minimum) that the command 'nosetests ./tests/test_input_file_builder.py' run at the command prompt passes first. 
+Functional Note: the tests of this code have only been run under OS X and Ubuntu, so I am not sure at all if this code will balk on Windows. If you are going to use this on Windows, please ensure (at a minimum) that the command 'nosetests ./tests/*.py' run at the command prompt passes first. 
